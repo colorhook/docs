@@ -1,0 +1,77 @@
+---
+title: 'Delete Project'
+description: 'Learn how to delete a project using the BlendDuck SDK'
+---
+
+# Delete Project
+
+This guide explains how to delete an existing project using the BlendDuck SDK.
+
+## Usage
+
+To delete a project, you'll use the `projects.delete()` method of the BlendDuck client. Here's a step-by-step guide:
+
+1. Initialize the BlendDuck client
+2. Call the `projects.delete()` method with the project ID
+3. Handle the response
+
+Here's an example:
+
+```typescript
+import BlendDuck from "@blendduck/node-sdk";
+
+async function deleteProject(projectId: string) {
+  // Initialize the BlendDuck client
+  const client = new BlendDuck({
+    apiKey: process.env.BLENDDUCK_API_KEY
+  });
+
+  try {
+    // Delete the project
+    await client.projects.delete(projectId);
+
+    console.log(`Project deleted successfully! ID: ${projectId}`);
+  } catch (error) {
+    console.error("Error deleting project:", error);
+  }
+}
+
+// Usage
+deleteProject("your-project-id-here");
+```
+
+## Return Value
+
+The `projects.delete()` method returns a Promise that resolves when the deletion is successful. It doesn't return any specific value.
+
+## Error Handling
+
+If there's an issue with deleting the project or with the API request, the method will throw an error. It's good practice to wrap the call in a try-catch block to handle any potential errors gracefully. Common errors might include:
+
+- Project not found
+- Insufficient permissions
+- Network errors
+
+## Best Practices
+
+1. **Confirmation**: Always confirm with the user before deleting a project, as this action is irreversible.
+2. **Cascading Deletes**: Be aware that deleting a project will also delete all associated clips, elements, and other resources. Make sure this is the intended behavior.
+3. **Cleanup**: If you're storing any local references or caches of the project, make sure to clean those up after successful deletion.
+4. **Logging**: Consider logging deletion actions for audit purposes.
+5. **Soft Delete**: If applicable to your use case, consider implementing a "soft delete" feature in your application layer, where projects are marked as deleted but not immediately removed from the system.
+
+## Safety Measures
+
+To prevent accidental deletions, you might want to implement additional safety measures in your application:
+
+1. Require a confirmation step before deletion
+2. Implement a "trash" system where deleted projects can be recovered for a certain period
+3. Add a delay between the delete request and the actual deletion
+
+## Related Features
+
+- [Retrieve Project](/features/retrieve-project)
+- [Create Project](/features/create-project)
+- [Update Project](/features/update-project)
+
+By understanding the project deletion process, you can manage your BlendDuck projects effectively, ensuring that you can remove unwanted or outdated content when necessary while safeguarding against accidental data loss.

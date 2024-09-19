@@ -1,0 +1,249 @@
+---
+title: 'Animation'
+description: 'Add smooth, natural animations to your elements'
+---
+
+You can add animations to elements with natural easing options. Each animation should serve a purpose in your video, whether it’s to draw attention, transition between scenes, or convey information.
+
+## Properties
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| id | string | uuid() | A unique identifier for the animation. |
+| type | string | - | The type of animation (e.g., `move`, `scale`, `fadeIn`, `slideOut`, etc.) |
+| startTime | number | 0 | The time (in seconds) when the animation begins |
+| endTime | number | - | The time (in seconds) when the animation ends |
+| easing | string | smooth | The easing of the animation |
+| initValue | any | null | (Optional) The initial value of some specific animations |
+| rotation | any | null | (Optional) The to value angle of some specific animations |
+| data | object | null | (Optional) The additional value of some specific animations |
+
+## Usage
+
+Here's an example of how to create and apply animations to elements:
+
+```typescript
+import BlendDuck, { Text, Animation, AnimationType, AnimationEasing } from "@blendduck/node-sdk";
+
+// Create a text element
+const textElement = new Text();
+textElement.text = "Animated Text";
+
+// Create a fade-in animation
+const fadeIn = new Animation(AnimationType.FadeIn);
+fadeIn.startTime = 0;
+fadeIn.endTime = 1;
+fadeIn.easing = AnimationEasing.Smooth;
+
+// Create a move animation
+const move = new Animation(AnimationType.Move);
+move.startTime = 1;
+move.endTime = 2;
+move.easing = AnimationEasing.EaseInOut;
+
+// Add animations to the text element
+textElement.addAnimation(fadeIn);
+textElement.addAnimation(move);
+```
+
+You can create Clip by JSON directly
+
+```typescript
+const slideIn = new Animation(AnimationType.SlideIn, {
+  direction: 'up', // slide direction
+  by: 100, // slide distance
+})
+
+// or
+const animation = Animation.fromJSON({
+  type: 'slideIn',
+  direction: 'up',
+  by: 100
+})
+```
+
+You can pass the `data` parameters while create an animation for Text element:
+
+```ts
+const appear = new Animation(AnimationType.Appear, {
+  data: {
+    type: 'Letters', // 'Letters', 'Words' or 'Lines'
+    order: 'Forward' // 'Forward' or 'Backward',
+    delay: 30, // 30% delay
+    smoothing: 'linear', // 'linear', 'easeIn', 'easeOut', 'easeInOut' or 'smooth'
+  }
+})
+
+const fadeIn = Animation.fromJSON({
+  type: 'fadeIn',
+  data: {
+    type: 'Words'
+    order: 'Forward',
+    delay: 0
+    smoothing: 'easeIn',
+  }
+})
+```
+
+<Note>The `smoothing` parameter only supports 5 types of animations</Note>
+
+## Animation Types
+
+BlendDuck supports various types of animations, including:
+
+### AnimationType.Move
+
+Change the position of an element.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| initValue | object | `{ moveX: 0, moveY: 0 }` | initial delta |
+| toValue | object | `{ moveX: 100, moveY: 0 }` | final delta |
+
+### AnimationType.Scale
+
+Adjust the size of an element.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| initValue | object | `{ scale: 1 }` | initial scale |
+| toValue | object | `{ scale: 1.5 }` | final scale |
+
+### AnimationType.Rotate
+
+Rotate an element.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| initValue | object | `{ rotation: 0 }` | initial rotation in degree |
+| toValue | object | `{ rotation: 45 }` | final rotation in degree |
+
+### AnimationType.Opacity
+
+Change the transparency of an element.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| initValue | object | `{ opacity: 1 }` | initial opacity |
+| toValue | object | `{ opacity: 0.5 }` | final opacity |
+
+
+### AnimationType.Appear
+
+Make an element suddenly appear.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+
+
+### AnimationType.FadeIn
+
+Gradually increase the opacity of an element.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+
+### AnimationType.SlideIn
+
+Slide an element into view.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| direction | string | `right` | `up`, `down`, `left` or `right` |
+| by | number | `100` | position delta |
+
+### AnimationType.MaskIn
+
+Reveal an element using a mask transition.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| direction | string | `right` | `up`, `down`, `left` or `right` |
+| by | number | `100` | position delta |
+
+### AnimationType.ShrinkIn
+
+Scale an element from a larger size to its full size.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| scale | number | `1.5` | initial scale |
+
+### AnimationType.GrowIn
+
+Scale an element from a smaller size to its full size.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| scale | number | `0.5` | initial scale |
+
+* **AnimationType.GrowIn**: Grow an element into view by increasing its size.
+
+### AnimationType.Disappear
+
+Make an element suddenly disappear.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+
+### AnimationType.FadeOut
+
+Gradually decrease the opacity of an element.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+
+### AnimationType.SlideOut
+
+Slide an element out of view.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| direction | string | `right` | `up`, `down`, `left` or `right` |
+| by | number | `100` | position delta |
+
+
+### AnimationType.MaskOut
+
+Hide an element using a mask transition.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| direction | string | `right` | `up`, `down`, `left` or `right` |
+| by | number | `100` | position delta |
+
+### AnimationType.ShrinkOut
+
+Scale an element out of video to a smaller size.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| scale | number | `0.5` | final scale |
+
+### AnimationType.GrowOut
+
+Shrink an element out of view to a larger size.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| scale | number | `1.5` | final scale |
+
+## Easing Types
+
+BlendDuck supports various types of easing functions, including:
+
+* **AnimationEasing.Smooth**: Applies smooth, natural transitions.
+* **AnimationEasing.Linear**: Animates at a constant speed.
+* **AnimationEasing.EaseIn**: Starts the animation slowly and accelerates towards the end.
+* **AnimationEasing.EaseOut**: Begins quickly and slows down towards the end.
+* **AnimationEasing.EaseInOut**: Combines both EaseIn and EaseOut, starting slowly, speeding up, and then slowing down again at the end.
+* **AnimationEasing.BackIn**: Pulls the animation slightly backwards before moving forward, creating an elastic effect at the start.
+* **AnimationEasing.BackOut**: Moves forward and then pulls back slightly at the end, giving a bounce-back effect on completion.
+* **AnimationEasing.BackInOut**: Combines both BackIn and BackOut, with a backward pull at the start and end of the animation.
+* **AnimationEasing.ElasticOut**: Creates a bouncy, spring-like effect at the end of the animation, as if the element snaps into place.
+* **AnimationEasing.BounceOut**: Makes the element bounce as it reaches the end of the animation, mimicking real-world physics.
+
+
+## Related Concepts
+
+- [Element](/concepts/element)

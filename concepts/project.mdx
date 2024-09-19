@@ -1,0 +1,62 @@
+---
+title: 'Project'
+description: 'Project is the top-level container for your video creation'
+---
+
+Project encapsulates all the elements, clips, and settings that make up your final video output.
+
+## Properties
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| id | string | uuid() | A unique identifier for the project. |
+| title | string | `Untitled` | The name of your project. |
+| ratio | string | `9:16` | The aspect ratio of your video (e.g., `16:9`, `9:16`, `4:3`, `1:1`) |
+| share | boolean | false | Whether the project is public shared or private |
+| theme | object | - | Global styling settings for your project (see [Theme](/concepts/theme) for more details) |
+| clips | array | [] | An array of [Clip](/concepts/clip) objects that make up your video. |
+
+
+## Usage
+
+Here's an example of how to create a new Project using the BlendDuck SDK:
+
+```typescript
+import BlendDuck, { Project, Clip } from "@blendduck/node-sdk";
+
+const client = new BlendDuck({
+  apiKey: process.env.BLENDDUCK_API_KEY
+});
+
+const project = new Project();
+project.title = "My Awesome Video";
+project.ratio = "16:9";
+project.share = false;
+
+// Add clips to your project
+const clip1 = new Clip(5); // 5-second clip
+project.addClip(clip1);
+
+// Create the project on BlendDuck
+const projectId = await client.projects.create(project);
+console.log(`New project created with ID: ${projectId}`);
+```
+
+Get the final JSON representing of the Project
+
+```typescript
+const json = project.toJSON();
+console.log(json)
+```
+
+You can create Project by JSON directly
+
+```typescript
+const project = Project.fromJSON(json)
+```
+
+## Related Concepts
+
+- [Clip](/concepts/clip)
+- [Theme](/concepts/theme)
+- [Element](/concepts/element)

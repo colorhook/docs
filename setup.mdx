@@ -1,0 +1,80 @@
+---
+title: 'Set up SDK'
+description: 'BlendDuck allows you to create video porgram'
+---
+
+
+## Welcome to BlendDuck
+
+BlendDuck is an API service that takes a URL, crawls it, and converts it into clean markdown. We crawl all accessible subpages and give you clean markdown for each. No sitemap required.
+
+## API Key
+
+To use the API, you need to sign up on BlendDuck and get an API key.
+
+## Installation
+
+<CodeGroup>
+
+```bash npm
+npm i @blendduck/node-sdk
+```
+
+```bash yarn
+yarn add @blendduck/node-sdk
+```
+
+</CodeGroup>
+
+## Usage
+
+<CodeGroup>
+```ts create project
+import BlendDuck, {
+  Project,
+  Clip,
+  Text,
+  Image,
+  Video,
+  Group,
+  Animation,
+  AnimationType,
+  AnimationEasing,
+  AudioPlay
+} from "@blendduck/node-sdk";
+
+const client = new BlendDuck({
+  apiKey: process.env.BLENDDUCK_API_KEY
+})
+
+// create project
+const project = new Project();
+
+// add a new clip and set the duration to 5 second
+const clip = new Clip(5);
+project.addClip(clip);
+
+// add a text to a clip
+const textElement = new Text();
+textElement.text = "Hello";
+clip.addElement(textElement);
+
+// add an animation to the text
+const fade = new Animation(AnimationType.FadeIn)
+fade.startTime = 0;
+fade.endTime = 0.3;
+fade.easing = AnimationEasing.Smooth;
+textElement.addAnimation(fade);
+
+// add an audio to the clip
+const audio = new AudioPlay({ url: "https://s.blendduck.com/audios/motivation.mp3" })
+clip.addAudioPlay(audio)
+
+// create a new project
+const id = await client.projects.create(project)
+
+// navigate to projectLink and preview the project in the BlendDuck editor
+const editLink = `https://blendduck.com/editor/${id}`
+console.log(editLink)
+```
+</CodeGroup>

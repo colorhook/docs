@@ -1,0 +1,49 @@
+---
+title: 'Theme'
+description: 'Align your theme with your brand guidelines for a professional look'
+---
+
+Theme allows you to maintain a consistent look and feel across all clips and elements in your video. Remember that individual clips and elements can override theme settings when needed.
+
+## Properties
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| background | object | `null` | The default background for all clips. |
+| fontFamily | string | `Inter` | The default font family used for text elements. |
+| fontColor | object | `{type: 'color', color: '#000000ff'}` | The default color for text elements. |
+| backgroundAudio | object | `null` | The background audio of the project. |
+
+## Usage
+
+Here's an example of how to set up a theme for your project:
+
+```typescript
+import BlendDuck, { Project, Theme } from "@blendduck/node-sdk";
+
+const project = new Project();
+
+project.theme = {
+  background: {
+    color: {
+      type: "color",
+      color: '#ffffffff'
+    },
+    media: {
+      type: "image",
+      url: "https://s.blendduck.com/images/24.png"
+    }
+  },
+  fontFamily: "Inter",
+  fontColor: {
+    type: "color",
+    color: "#333333ff"
+  }
+};
+```
+
+## Related Concepts
+
+- [Project](/concepts/project)
+- [Clip](/concepts/clip)
+- [Element](/concepts/element)

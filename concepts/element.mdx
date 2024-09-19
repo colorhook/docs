@@ -1,0 +1,199 @@
+---
+title: 'Element'
+description: 'Element is any visual component that can be added to a clip'
+---
+
+Elements are the building blocks of your video content, including text, images, videos, shapes, and more. Consider the order of elements in your clip. Elements added later will appear on top of earlier elements.
+
+## Properties
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| id | string | uuid() | A unique identifier for the element. |
+| name | string | - | A name for the element. |
+| type | string | `9:16` | The type of element (e.g., `text`, `image`, `video`, `shape`, etc.) |
+| x | number | `0` | The x position of the element |
+| y | number | `0` | The y position of the element |
+| width | number | - | The width of the element |
+| height | number | - | The height of the element |
+| rotation | number | `0` | The rotation angle of the element in degrees |
+| scale | number | `1` | The scale factor of the element |
+| opacity | number | `1` | The opacity of the element (0 to 1) |
+| animations | array | `[]` | An array of [Animation](/concepts/animation) objects applied to the element. |
+
+## Usage
+
+Here's an example of how to create and customize different types of elements:
+
+```typescript
+import BlendDuck, { Text, Image, Video, Animation, AnimationType } from "@blendduck/node-sdk";
+
+// Create a text element
+const textElement = new Text();
+textElement.text = "Hello, BlendDuck!";
+textElement.fontSize = 48;
+textElement.x = 100;
+textElement.y = 100;
+
+// Create an image element
+const imageElement = new Image();
+imageElement.url = "https://s.blendduck.com/images/24.png";
+imageElement.width = 300;
+imageElement.height = 200;
+imageElement.x = 200;
+imageElement.y = 200;
+
+// Create a video element
+const videoElement = new Video();
+videoElement.url = "https://s.blendduck.com/videos/07.mp4";
+videoElement.width = 640;
+videoElement.height = 360;
+videoElement.x = 300;
+videoElement.y = 300;
+videoElement.volume = 0.8;
+videoElement.loop = true;
+
+// Add an animation to an element
+const fadeIn = new Animation(AnimationType.FadeIn);
+fadeIn.startTime = 0;
+fadeIn.endTime = 1;
+textElement.addAnimation(fadeIn);
+```
+
+## Element Types
+
+BlendDuck supports various types of elements
+
+## Element Types
+
+BlendDuck supports various types of elements. Below are the descriptions of each element type along with example code snippets to create them.
+
+### Text
+
+| Property      | Type   | Default | Description                                        |
+|---------------|--------|---------|----------------------------------------------------|
+| text          | string | -       | The content of the text.                          |
+| textAlign     | enum   | `center`  | The alignment of the text (e.g., `left`, `right`).|
+| fontSize      | number | `60`       | The size of the font in pixels.                   |
+| fontFamily    | string | `null`    | The font family of the text, if `null`, using the `fontFamily` in Theme. |
+| bold          | bool   | `false`   | If true, the text is bold.                        |
+| italic        | bool   | `false`   | If true, the text is italic.                      |
+| underline     | bool   | `false`   | If true, the text has an underline.               |
+| strikethrough | bool   | `false`   | If true, the text has a strikethrough.            |
+| textStyle     | enum   | `none`  | The style of the text (e.g., `shadow`, `neon`, `stack`, `stage`, `glitch`).   |
+| autoSize      | bool   | `true`   | If true, the text box adjusts its size automatically.|
+
+
+```ts
+import { Text } from "@blendduck/node-sdk";
+
+const textElement = new Text();
+textElement.text = "Hello World";
+textElement.fontWeight = 700;
+textElement.fontSize = 24;
+textElement.bold = true;
+textElement.textAlign = "center";
+```
+
+### Image
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| url | string | - |  The URL of the image. |
+| radius | number | `0` | The border radius of the image. |
+
+
+```ts
+import { Image } from "@blendduck/node-sdk";
+
+const imageElement = new Image();
+imageElement.url = "https://example.com/image.jpg";
+imageElement.radius = 10;
+```
+
+### Video
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| url | string | - |  The URL of the video. |
+| volume | boolean | `1` | The volume of the video (0-1). |
+| loop | boolean | `false` | If true, the video will loop. |
+| radius | number | `0` | The border radius of the video. |
+
+```ts
+import { Video } from "@blendduck/node-sdk";
+
+const videoElement = new Video();
+videoElement.url = "https://example.com/video.mp4";
+videoElement.volume = 0.8;
+videoElement.loop = true;
+```
+
+### Emoji
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| url | string | - | the URL of the emoji |
+
+```ts
+import { Emoji } from "@blendduck/node-sdk";
+
+const emojiElement = new Emoji();
+emojiElement.url = "https://example.com/emoji.png";
+```
+
+### Shape
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| shapeId | string | - | The shape ID of the shape element. |
+| fill | color | - | The color or gradient of the shape. |
+
+
+```ts
+import { Shape } from "@blendduck/node-sdk";
+
+const shapeElement = new Shape();
+shapeElement.shapeId = 'rect';
+shapeElement.fill = { type: "color", color: "#ff0000" };
+```
+
+### Lottie
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| url | string | - |  the URL of the lottie file |
+
+
+```ts
+import { Lottie } from "@blendduck/node-sdk";
+
+const lottieElement = new Lottie();
+lottieElement.url = "https://example.com/animation.json";
+```
+
+### Group
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| children | array | `[]` |  The array of elements that form the group. |
+
+```ts
+import { Group, Text, Image } from "@blendduck/node-sdk";
+
+const groupElement = new Group();
+
+const textElement = new Text();
+textElement.text = "Grouped Text";
+
+const imageElement = new Image();
+imageElement.url = "https://example.com/image.jpg";
+
+groupElement.children = [textElement, imageElement];
+```
+
+## Related Concepts
+
+- [Clip](/concepts/clip)
+- [Animation](/concepts/animation)
+- [AudioPlay](/concepts/audio-play)

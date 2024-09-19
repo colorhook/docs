@@ -1,29 +1,29 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "BlendDuck",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/logo-dark.svg",
+    "light": "/logo/logo-light.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#5D4CFE",
+    "light": "#8477FF",
+    "dark": "#5D4CFE",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#5D4CFE",
+      "to": "#8477FF"
     }
   },
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "mailto:contact@blendduck.com"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
+    "url": "https://www.blendduck.com/dashboard"
   },
   "tabs": [
     {
@@ -31,41 +31,42 @@
       "url": "api-reference"
     }
   ],
-  "anchors": [
+  "anchors2": [
     {
       "name": "Documentation",
       "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
-    },
-    {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "url": "https://docs.blendduck.com"
     }
   ],
   "navigation": [
     {
       "group": "Get Started",
       "pages": [
+       
         "introduction",
         "quickstart",
-        "development"
+        "rate-limits"
       ]
     },
     {
-      "group": "Essentials",
+      "group": "Concepts",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "concepts/project",
+        "concepts/clip",
+        "concepts/element",
+        "concepts/animation",
+        "concepts/audio-play",
+        "concepts/theme"
+      ]
+    },
+    {
+      "group": "Features",
+      "pages": [
+        "features/retrieve-project",
+        "features/create-project",
+        "features/update-project",
+        "features/delete-project",
+        "features/export-video"
       ]
     },
     {
@@ -84,8 +85,7 @@
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "x": "https://x.com/blendduck",
+    "github": "https://github.com/blendduck"
   }
 }

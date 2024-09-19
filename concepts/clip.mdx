@@ -1,0 +1,66 @@
+---
+title: 'Clip'
+description: 'Use multiple clips to segment your video logically'
+---
+
+Clip is a container for visual and audio elements, with its own duration and transition effects.
+
+## Properties
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| id | string | uuid() | A unique identifier for the clip. |
+| duration | number | 5 | The length of the clip in seconds. |
+| durationLock | boolean | false | A boolean indicating whether the duration is locked or can be adjusted in the editor. |
+| transition | string | `none` | The type of transition effect when moving to the next clip（e.g., `none`, `fade`, `wipe`, `flip`, `slide`, `clock`) |
+| elements | array | [] | An array of [Element](/concepts/element) objects contained within the clip |
+| audios | array | [] | An array of [AudioPlay](/concepts/audio-play) objects for audio tracks in the clip |
+| background | object | null | Optional background settings for the clip, which can override the project's theme |
+
+## Usage
+
+Here's an example of how to create and customize a Clip using the BlendDuck SDK:
+
+```typescript
+import BlendDuck, { Clip, Text, AudioPlay } from "@blendduck/node-sdk";
+
+const clip = new Clip(5); // Create a 5-second clip
+clip.transition = 'fade';
+
+// Add a text element to the clip
+const textElement = new Text();
+textElement.text = "Hello, BlendDuck!";
+clip.addElement(textElement);
+
+// Add an audio track to the clip
+const audio = new AudioPlay({ url: "https://s.blendduck.com/audios/motivation.mp3" });
+clip.addAudioPlay(audio);
+
+// Set a custom background for this clip
+clip.background = {
+  color: {
+    type: "color",
+    color: "#00ff33ff"
+  }
+};
+```
+
+Get the final JSON representing of the Clip
+
+```typescript
+const json = clip.toJSON();
+console.log(json)
+```
+
+You can create Clip by JSON directly
+
+```typescript
+const clip = Clip.fromJSON(json)
+```
+
+
+## Related Concepts
+
+- [Project](/concepts/project)
+- [Element](/concepts/element)
+- [AudioPlay](/concepts/audio-play)

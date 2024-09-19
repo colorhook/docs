@@ -1,0 +1,63 @@
+---
+title: 'AudioPlay'
+description: 'AudioPlay represents an audio track that can be added to a clip or specific Elements'
+---
+
+AudioPlay allows you to incorporate music, sound effects, voiceovers, or any other audio content into your video projects.
+
+## Properties
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| id | string | uuid() | A unique identifier for the AudioPlay. |
+| url | string | - | The URL of the audio file |
+| name | string | - | A short name for the audio track |
+| startTime | number | `0` | The time (in seconds) when the audio begins |
+| endTime | number | - | The time (in seconds) when the audio ends |
+| volume | number | `1` | The volume level of the audio track (0 to 1) |
+| fade | object | `null` | (Optional) The fade in and fade out in seconds|
+
+## Usage
+
+Here's an example of how to create and add an AudioPlay object to a clip:
+
+```typescript
+import BlendDuck, { Clip, AudioPlay } from "@blendduck/node-sdk";
+
+// Create a new clip
+const clip = new Clip(10); // 10-second clip
+
+// Create an audio track
+const backgroundMusic = new AudioPlay({
+  url: "https://s.blendduck.com/audios/motivation.mp3",
+  name: "Background Music",
+  startTime: 0,
+  endTime: 10,
+  volume: 0.8
+});
+
+// Add the audio track to the clip
+clip.addAudioPlay(backgroundMusic);
+```
+
+You can create smooth fades in and out by fade properties
+
+```typescript
+const backgroundMusic = new AudioPlay({
+  url: "https://s.blendduck.com/audios/motivation.mp3",
+  name: "Background Music",
+  startTime: 0,
+  endTime: 10,
+  volume: 0.8,
+  fade: {
+    in: 2, // fade in at the beginning for 2 seconds
+    out: 3, // fade out at the end for 3 seconds
+  }
+});
+```
+
+## Related Concepts
+
+- [Clip](/concepts/clip)
+- [Project](/concepts/project)
+- [Element](/concepts/element)
