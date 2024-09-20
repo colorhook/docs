@@ -1,33 +1,23 @@
 ---
 title: 'Create Project'
-description: 'Learn how to create a new project using the BlendDuck SDK'
+description: 'Create a new project using Project object'
 ---
-
-# Create Project
 
 This guide explains how to create a new project using the BlendDuck SDK.
 
 ## Usage
 
-To create a new project, you'll use the `projects.create()` method of the BlendDuck client. Here's a step-by-step guide:
-
-1. Initialize the BlendDuck client
-2. Create a new `Project` object
-3. Configure the project properties
-4. Call the `projects.create()` method with the project object
-5. Use the returned project ID
-
-Here's an example:
+To create a new project, you'll use the `projects.create()` method of the BlendDuck client.
 
 ```typescript
 import BlendDuck, { Project, Clip, Text, Animation, AnimationType } from "@blendduck/node-sdk";
 
-async function createProject() {
-  // Initialize the BlendDuck client
-  const client = new BlendDuck({
-    apiKey: process.env.BLENDDUCK_API_KEY
-  });
+// Initialize the BlendDuck client
+const client = new BlendDuck({
+  apiKey: process.env.BLENDDUCK_API_KEY
+});
 
+async function createProject() {
   // Create a new project
   const project = new Project();
   project.title = "My New Video Project";
@@ -55,42 +45,25 @@ async function createProject() {
   // Add the clip to the project
   project.addClip(clip);
 
-  try {
-    // Create the project on BlendDuck
-    const projectId = await client.projects.create(project);
+  // Create the project on BlendDuck
+  const projectId = await client.projects.create(project);
 
-    console.log(`Project created successfully! ID: ${projectId}`);
-    console.log(`Edit your project at: https://blendduck.com/editor/${projectId}`);
-
-    return projectId;
-  } catch (error) {
-    console.error("Error creating project:", error);
-  }
+  console.log(`Project created successfully! ID: ${projectId}`);
+  console.log(`Edit your project at: https://blendduck.com/editor/${projectId}`);
 }
 
 // Usage
 createProject();
 ```
 
-## Return Value
-
-The `projects.create()` method returns a Promise that resolves to a string containing the ID of the newly created project.
+<Note>When creating a new project, there is at least one `Clip` in the `Project`.</Note>
 
 ## Error Handling
 
 If there's an issue with creating the project or with the API request, the method will throw an error. It's good practice to wrap the call in a try-catch block to handle any potential errors gracefully.
-
-## Best Practices
-
-1. **Project Structure**: Plan your project structure before creation. Consider how many clips you need and what elements each clip should contain.
-2. **Reusability**: If you're creating similar projects often, consider creating template functions that generate common project structures.
-3. **Validation**: Validate your project properties before sending them to the API to ensure all required fields are filled and in the correct format.
-4. **Error Handling**: Implement robust error handling to manage cases where project creation might fail.
 
 ## Related Features
 
 - [Retrieve Project](/features/retrieve-project)
 - [Update Project](/features/update-project)
 - [Delete Project](/features/delete-project)
-
-By mastering the project creation process, you can programmatically generate new video projects in BlendDuck, enabling rapid content creation and automation of your video production workflow.

@@ -1,102 +1,71 @@
 ---
 title: 'Update Project'
-description: 'Learn how to update an existing project using the BlendDuck SDK'
+description: 'Update an existing project'
 ---
-
-# Update Project
 
 This guide explains how to update an existing project using the BlendDuck SDK.
 
 ## Usage
 
-To update a project, you'll use the `projects.update()` method of the BlendDuck client. Here's a step-by-step guide:
-
-1. Initialize the BlendDuck client
-2. Retrieve the existing project
-3. Modify the project properties as needed
-4. Call the `projects.update()` method with the modified project object
-
-Here's an example:
+To update a project, you'll use the `projects.update()` method of the BlendDuck client.
 
 ```typescript
 import BlendDuck, { Text, Animation, AnimationType } from "@blendduck/node-sdk";
 
+// Initialize the BlendDuck client
+const client = new BlendDuck({
+  apiKey: process.env.BLENDDUCK_API_KEY
+});
+
 async function updateProject(projectId: string) {
-  // Initialize the BlendDuck client
-  const client = new BlendDuck({
-    apiKey: process.env.BLENDDUCK_API_KEY
-  });
+  // Retrieve the existing project
+  const project = await client.projects.get(projectId);
 
-  try {
-    // Retrieve the existing project
-    const project = await client.projects.get(projectId);
+  // Modify project properties
+  project.title = "Updated Video Project";
 
-    // Modify project properties
-    project.title = "Updated Video Project";
+  // Add a new clip
+  const newClip = new Clip(3); // 3-second clip
+  const newText = new Text();
+  newText.text = "New content!";
+  newText.x = 960;
+  newText.y = 540;
+  newText.fontSize = 48;
 
-    // Add a new clip
-    const newClip = new Clip(3); // 3-second clip
-    const newText = new Text();
-    newText.text = "New content!";
-    newText.x = 960;
-    newText.y = 540;
-    newText.fontSize = 48;
+  const fadeIn = new Animation(AnimationType.FadeIn);
+  fadeIn.startTime = 0;
+  fadeIn.endTime = 1;
+  newText.addAnimation(fadeIn);
 
-    const fadeIn = new Animation(AnimationType.FadeIn);
-    fadeIn.startTime = 0;
-    fadeIn.endTime = 1;
-    newText.addAnimation(fadeIn);
+  newClip.addElement(newText);
+  project.addClip(newClip);
 
-    newClip.addElement(newText);
-    project.addClip(newClip);
+  const firstClip = project.clips[0];
+  firstClip.duration = 6; // Change duration to 6 seconds
 
-    // Update an existing clip (assuming the project has at least one clip)
-    if (project.clips.length > 0) {
-      const firstClip = project.clips[0];
-      firstClip.duration = 6; // Change duration to 6 seconds
-
-      // Modify an existing text element (assuming the first element is text)
-      if (firstClip.elements.length > 0 && firstClip.elements[0].type === 'text') {
-        const textElement = firstClip.elements[0] as Text;
-        textElement.text = "Updated text content";
-        textElement.fontSize = 72;
-      }
-    }
-
-    // Update the project on BlendDuck
-    await client.projects.update(project);
-
-    console.log(`Project updated successfully! ID: ${project.id}`);
-    console.log(`Edit your updated project at: https://blendduck.com/editor/${project.id}`);
-  } catch (error) {
-    console.error("Error updating project:", error);
+  // Modify an existing text element (assuming the first element is text)
+  if (firstClip.elements.length > 0 && firstClip.elements[0].type === 'text') {
+    const textElement = firstClip.elements[0] as Text;
+    textElement.text = "Updated text content";
+    textElement.fontSize = 72;
   }
+  // Update the project on BlendDuck
+  await client.projects.update(project);
+  console.log(`Project updated successfully! ID: ${project.id}`);
+  console.log(`Edit your updated project at: https://blendduck.com/editor/${project.id}`);
+  
 }
 
 // Usage
 updateProject("your-project-id-here");
 ```
 
-## Return Value
-
-The `projects.update()` method returns a Promise that resolves when the update is successful. It doesn't return any specific value.
-
 ## Error Handling
 
 If there's an issue with updating the project or with the API request, the method will throw an error. It's good practice to wrap the call in a try-catch block to handle any potential errors gracefully.
-
-## Best Practices
-
-1. **Partial Updates**: Only update the properties that have changed to minimize data transfer and processing time.
-2. **Versioning**: Consider implementing a versioning system for your projects to track changes over time.
-3. **Validation**: Validate your modified project properties before sending them to the API to ensure all required fields are filled and in the correct format.
-4. **Concurrency**: Be aware of potential concurrency issues if multiple processes are updating the same project simultaneously.
-5. **Backup**: Consider creating a backup of the project before making significant changes.
 
 ## Related Features
 
 - [Retrieve Project](/features/retrieve-project)
 - [Create Project](/features/create-project)
 - [Delete Project](/features/delete-project)
-
-By mastering the project update process, you can programmatically modify existing video projects in BlendDuck, enabling dynamic content updates and iterative improvements to your video productions.

@@ -1,32 +1,24 @@
 ---
 title: 'Export Video'
-description: 'Learn how to export a video from a project using the BlendDuck SDK'
+description: 'Export a video from a project'
 ---
-
-# Export Video
 
 This guide explains how to export a video from an existing project using the BlendDuck SDK.
 
 ## Usage
 
-To export a video, you'll use the `projects.exportVideo()` method of the BlendDuck client. Here's a step-by-step guide:
-
-1. Initialize the BlendDuck client
-2. Call the `projects.exportVideo()` method with the project ID and export options
-3. Monitor the export progress
-4. Retrieve the exported video URL
-
-Here's an example:
+To export a video, you'll use the `videos.export()` method of the BlendDuck client.
 
 ```typescript
 import BlendDuck, { ExportOptions, ExportStatus } from "@blendduck/node-sdk";
 
-async function exportVideo(projectId: string) {
-  // Initialize the BlendDuck client
-  const client = new BlendDuck({
-    apiKey: process.env.BLENDDUCK_API_KEY
-  });
 
+// Initialize the BlendDuck client
+const client = new BlendDuck({
+  apiKey: process.env.BLENDDUCK_API_KEY
+});
+
+async function exportVideo(projectId: string) {
   // Define export options
   const exportOptions: ExportOptions = {
     resolution: "1080p",
@@ -37,7 +29,7 @@ async function exportVideo(projectId: string) {
 
   try {
     // Start the export process
-    const exportId = await client.projects.exportVideo(projectId, exportOptions);
+    const exportId = await client.videos.export(projectId, exportOptions);
 
     console.log(`Export process started. Export ID: ${exportId}`);
 
@@ -45,13 +37,13 @@ async function exportVideo(projectId: string) {
     let status: ExportStatus;
     do {
       await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds
-      status = await client.projects.getExportStatus(exportId);
+      status = await client.videos.getExportStatus(exportId);
       console.log(`Export progress: ${status.progress}%`);
-    } while (status.status === 'processing');
+    } while (status.status === ExportStatus.PROGRESS);
 
-    if (status.status === 'completed') {
+    if (status.status === ExportStatus.SUCCESS) {
       console.log(`Export completed successfully!`);
-      console.log(`Download your video at: ${status.downloadUrl}`);
+      console.log(`Download your video at: ${status.url}`);
     } else {
       console.error(`Export failed: ${status.error}`);
     }
@@ -79,25 +71,15 @@ The `getExportStatus()` method returns an `ExportStatus` object with the followi
 
 - `status`: The current status of the export ("processing", "completed", or "failed")
 - `progress`: The export progress as a percentage (0-100)
-- `downloadUrl`: The URL to download the exported video (available when status is "completed")
+- `url`: The URL to download the exported video (available when status is "completed")
 - `error`: Error message if the export failed
 
 ## Error Handling
 
 If there's an issue with starting the export or with the API request, the method will throw an error. It's good practice to wrap the call in a try-catch block to handle any potential errors gracefully.
 
-## Best Practices
-
-1. **Quality vs File Size**: Choose the appropriate resolution, quality, and format based on your needs. Higher quality exports will result in larger file sizes.
-2. **Progress Monitoring**: For long videos, implement a user-friendly way to display export progress, such as a progress bar or periodic notifications.
-3. **Timeout Handling**: Implement a timeout mechanism for very long exports to prevent indefinite waiting.
-4. **Retry Logic**: Consider implementing retry logic for failed exports, as temporary issues might resolve themselves.
-5. **Parallel Exports**: If exporting multiple videos, consider implementing a queue system to manage parallel exports efficiently.
-
 ## Related Features
 
 - [Retrieve Project](/features/retrieve-project)
 - [Create Project](/features/create-project)
 - [Update Project](/features/update-project)
-
-By mastering the video export process, you can programmatically generate the final video output from your BlendDuck projects, enabling automated video production workflows and integration with other systems.

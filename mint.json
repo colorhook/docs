@@ -27,6 +27,10 @@
   },
   "tabs": [
     {
+      "name": "Widget Reference",
+      "url": "widgets"
+    },
+    {
       "name": "API Reference",
       "url": "api-reference"
     }
@@ -42,8 +46,6 @@
     {
       "group": "Get Started",
       "pages": [
-       
-        "introduction",
         "quickstart",
         "rate-limits"
       ]
@@ -67,6 +69,13 @@
         "features/update-project",
         "features/delete-project",
         "features/export-video"
+      ]
+    },
+    {
+      "group": "Widget Reference",
+      "pages": [
+        "widgets/list",
+        "widgets/custom"
       ]
     },
     {

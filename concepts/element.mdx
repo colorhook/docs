@@ -9,7 +9,7 @@ Elements are the building blocks of your video content, including text, images, 
 
 | Property | Type | Default | Description |
 |------|------|-------------|------|
-| id | string | uuid() | A unique identifier for the element. |
+| id | string | `uuid()` | A unique identifier for the element. |
 | name | string | - | A name for the element. |
 | type | string | `9:16` | The type of element (e.g., `text`, `image`, `video`, `shape`, etc.) |
 | x | number | `0` | The x position of the element |
@@ -62,13 +62,11 @@ textElement.addAnimation(fadeIn);
 
 ## Element Types
 
-BlendDuck supports various types of elements
-
-## Element Types
-
 BlendDuck supports various types of elements. Below are the descriptions of each element type along with example code snippets to create them.
 
 ### Text
+
+The `Text` element allows you to add customizable text content to your videon. You can modify properties such as font size, style, and alignment.
 
 | Property      | Type   | Default | Description                                        |
 |---------------|--------|---------|----------------------------------------------------|
@@ -97,6 +95,8 @@ textElement.textAlign = "center";
 
 ### Image
 
+The `Image` element enables you to add static images from a URL.
+
 | Property | Type | Default | Description |
 |------|------|-------------|------|
 | url | string | - |  The URL of the image. |
@@ -112,6 +112,8 @@ imageElement.radius = 10;
 ```
 
 ### Video
+
+The `Video` element allows you to embed video content from a URL. You can manage playback properties such as volume and looping.
 
 | Property | Type | Default | Description |
 |------|------|-------------|------|
@@ -131,6 +133,8 @@ videoElement.loop = true;
 
 ### Emoji
 
+The `Emoji` element lets you add dynamic emojis to your `Clip`. 
+
 | Property | Type | Default | Description |
 |------|------|-------------|------|
 | url | string | - | the URL of the emoji |
@@ -143,6 +147,8 @@ emojiElement.url = "https://example.com/emoji.png";
 ```
 
 ### Shape
+
+The `Shape` element allows you to add basic geometric shapes to your `Clip`. You can customize their appearance with different colors or gradients, making them useful for creating backgrounds, dividers, or other visual elements.
 
 | Property | Type | Default | Description |
 |------|------|-------------|------|
@@ -160,6 +166,8 @@ shapeElement.fill = { type: "color", color: "#ff0000" };
 
 ### Lottie
 
+The `Lottie` element allows you to embed lightweight animations by Lottie URL, the URL can be `.json` or `.lottie`.
+
 | Property | Type | Default | Description |
 |------|------|-------------|------|
 | url | string | - |  the URL of the lottie file |
@@ -173,6 +181,8 @@ lottieElement.url = "https://example.com/animation.json";
 ```
 
 ### Group
+
+The `Group` element acts as a container for other elements. By grouping multiple elements together, you can apply transformationsto the group as a whole, allowing for better organization and control over complex layouts.
 
 | Property | Type | Default | Description |
 |------|------|-------------|------|
@@ -191,6 +201,40 @@ imageElement.url = "https://example.com/image.jpg";
 
 groupElement.children = [textElement, imageElement];
 ```
+
+### Widget
+
+The `Widget` element allows for embedding custom-built components. This flexible element type is ideal for dynamic data visualizations, charts, or other resuable blocks in your video.
+
+| Property | Type | Default | Description |
+|------|------|-------------|------|
+| scope | string | - |  The widget package scope identifier. |
+| widgetId | string | - |  The widget ID in the scope. |
+
+```ts
+import { Widget } from "@blendduck/node-sdk";
+
+const widget = new Widget({ scope: 'core', widgetId: 'counter' });
+```
+
+A `Widget` is an extension of an `Element`. You can use the built-in ready-made widgets or develop your own widgets.
+
+<CardGroup cols={2}>
+  <Card
+    title="Builtin Widgets"
+    icon="puzzle-piece"
+    href="/widgets/list"
+  >
+    Use ready-made widgets out of box
+  </Card>
+  <Card
+    title="Build a Widget"
+    icon="code"
+    href="/widgets/custom"
+  >
+    Make a widget customized for your needs.
+  </Card>
+</CardGroup>
 
 ## Related Concepts
 

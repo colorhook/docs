@@ -9,13 +9,13 @@ Clip is a container for visual and audio elements, with its own duration and tra
 
 | Property | Type | Default | Description |
 |------|------|-------------|------|
-| id | string | uuid() | A unique identifier for the clip. |
-| duration | number | 5 | The length of the clip in seconds. |
-| durationLock | boolean | false | A boolean indicating whether the duration is locked or can be adjusted in the editor. |
+| id | string | `uuid()` | A unique identifier for the clip. |
+| duration | number | `5` | The length of the clip in seconds. |
+| durationLock | boolean | `false` | A boolean indicating whether the duration is locked or can be adjusted in the editor. |
 | transition | string | `none` | The type of transition effect when moving to the next clip（e.g., `none`, `fade`, `wipe`, `flip`, `slide`, `clock`) |
-| elements | array | [] | An array of [Element](/concepts/element) objects contained within the clip |
-| audios | array | [] | An array of [AudioPlay](/concepts/audio-play) objects for audio tracks in the clip |
-| background | object | null | Optional background settings for the clip, which can override the project's theme |
+| elements | array | `[]` | An array of [Element](/concepts/element) objects contained within the clip |
+| audios | array | `[]` | An array of [AudioPlay](/concepts/audio-play) objects for audio tracks in the clip |
+| background | object | `null` | Optional background settings for the clip, which can override the project's theme |
 
 ## Usage
 
@@ -49,7 +49,6 @@ Get the final JSON representing of the Clip
 
 ```typescript
 const json = clip.toJSON();
-console.log(json)
 ```
 
 You can create Clip by JSON directly

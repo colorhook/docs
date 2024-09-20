@@ -9,14 +9,14 @@ You can add animations to elements with natural easing options. Each animation s
 
 | Property | Type | Default | Description |
 |------|------|-------------|------|
-| id | string | uuid() | A unique identifier for the animation. |
+| id | string | `uuid()` | A unique identifier for the animation. |
 | type | string | - | The type of animation (e.g., `move`, `scale`, `fadeIn`, `slideOut`, etc.) |
-| startTime | number | 0 | The time (in seconds) when the animation begins |
+| startTime | number | `0` | The time (in seconds) when the animation begins |
 | endTime | number | - | The time (in seconds) when the animation ends |
-| easing | string | smooth | The easing of the animation |
-| initValue | any | null | (Optional) The initial value of some specific animations |
-| rotation | any | null | (Optional) The to value angle of some specific animations |
-| data | object | null | (Optional) The additional value of some specific animations |
+| easing | string | `smooth` | The easing of the animation |
+| initValue | any | `null` | (Optional) The initial value of some specific animations |
+| rotation | any | `null` | (Optional) The to value angle of some specific animations |
+| data | object | `null` | (Optional) The additional value of some specific animations |
 
 ## Usage
 
@@ -242,7 +242,6 @@ BlendDuck supports various types of easing functions, including:
 * **AnimationEasing.BackInOut**: Combines both BackIn and BackOut, with a backward pull at the start and end of the animation.
 * **AnimationEasing.ElasticOut**: Creates a bouncy, spring-like effect at the end of the animation, as if the element snaps into place.
 * **AnimationEasing.BounceOut**: Makes the element bounce as it reaches the end of the animation, mimicking real-world physics.
-
 
 ## Related Concepts
 

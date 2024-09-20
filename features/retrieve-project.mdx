@@ -1,78 +1,65 @@
 ---
 title: 'Retrieve Project'
-description: 'Learn how to retrieve a project using the BlendDuck SDK'
+description: 'Retrieve a project or projects'
 ---
 
-# Retrieve Project
-
-This guide explains how to retrieve an existing project using the BlendDuck SDK.
+This guide explains how to retrieve an existing project or projects using the BlendDuck SDK.
 
 ## Usage
 
-To retrieve a project, you'll use the `projects.get()` method of the BlendDuck client. Here's a step-by-step guide:
-
-1. Initialize the BlendDuck client
-2. Call the `projects.get()` method with the project ID
-3. Use the returned project object
-
-Here's an example:
+To retrieve a project, you'll use the `projects.get()` method of the BlendDuck client. 
 
 ```typescript
 import BlendDuck from "@blendduck/node-sdk";
 
+// Initialize the BlendDuck client
+const client = new BlendDuck({
+  apiKey: process.env.BLENDDUCK_API_KEY
+});
+
 async function retrieveProject(projectId: string) {
-  // Initialize the BlendDuck client
-  const client = new BlendDuck({
-    apiKey: process.env.BLENDDUCK_API_KEY
-  });
+  // Retrieve the project
+  const project = await client.projects.get(projectId);
 
-  try {
-    // Retrieve the project
-    const project = await client.projects.get(projectId);
+  console.log(`Retrieved project: ${project.title}`);
+  console.log(`Number of clips: ${project.clips.length}`);
 
-    console.log(`Retrieved project: ${project.title}`);
-    console.log(`Number of clips: ${project.clips.length}`);
-
-    // You can now work with the project object
-    // For example, you can access its properties:
-    console.log(`Project aspect ratio: ${project.ratio}`);
-    console.log(`Project theme: `, project.theme);
-
-    return project;
-  } catch (error) {
-    console.error("Error retrieving project:", error);
-  }
+  // You can now work with the project object
+  // For example, you can access its properties:
+  console.log(`Project aspect ratio: ${project.ratio}`);
+  console.log(`Project theme: `, project.theme);
 }
 
 // Usage
 retrieveProject("your-project-id-here");
 ```
 
-## Return Value
+To retrieve projects, you'll use the `projects.list()` method
 
-The `projects.get()` method returns a Promise that resolves to a `Project` object. This object contains all the properties of your project, including:
+```ts
+import BlendDuck from "@blendduck/node-sdk";
 
-- `id`: The unique identifier of the project
-- `title`: The title of the project
-- `ratio`: The aspect ratio of the project
-- `share`: Whether the project is shared or not
-- `theme`: The global theme settings of the project
-- `clips`: An array of `Clip` objects representing the video clips in the project
+// Initialize the BlendDuck client
+const client = new BlendDuck({
+  apiKey: process.env.BLENDDUCK_API_KEY
+});
+
+async function retrieveProjects() {
+  const projects = await client.projects.list();
+  // equals
+  // const projects = await client.projects.list({ page: 0, limit: 20 });
+}
+
+// Usage
+retrieveProjects();
+```
 
 ## Error Handling
 
 If the project cannot be found or there's an issue with the API request, the method will throw an error. It's good practice to wrap the call in a try-catch block to handle any potential errors gracefully.
-
-## Best Practices
-
-1. **Error Handling**: Always implement error handling to manage cases where the project might not exist or there are network issues.
-2. **Caching**: If you're retrieving the same project frequently, consider implementing caching to reduce API calls.
-3. **Permissions**: Ensure that your API key has the necessary permissions to retrieve projects.
 
 ## Related Features
 
 - [Create Project](/features/create-project)
 - [Update Project](/features/update-project)
 - [Delete Project](/features/delete-project)
-
-By mastering the project retrieval process, you can effectively work with existing projects in your BlendDuck account, enabling you to view, analyze, and potentially update your video projects programmatically.
