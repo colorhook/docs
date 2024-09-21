@@ -22,8 +22,7 @@ async function exportVideo(projectId: string) {
   // Define export options
   const exportOptions: ExportOptions = {
     resolution: "1080p",
-    format: "mp4",
-    quality: "high",
+    quality: "medium",
     fps: 30
   };
 
@@ -39,9 +38,9 @@ async function exportVideo(projectId: string) {
       await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 5 seconds
       status = await client.videos.getExportStatus(exportId);
       console.log(`Export progress: ${status.progress}%`);
-    } while (status.status === ExportStatus.PROGRESS);
+    } while (status.status === ExportStatus.Processing);
 
-    if (status.status === ExportStatus.SUCCESS) {
+    if (status.status === ExportStatus.Completed) {
       console.log(`Export completed successfully!`);
       console.log(`Download your video at: ${status.url}`);
     } else {
@@ -60,8 +59,7 @@ exportVideo("your-project-id-here");
 
 The `ExportOptions` object allows you to customize your video export:
 
-- `resolution`: The video resolution (e.g., "720p", "1080p", "4K")
-- `format`: The output format (e.g., "mp4", "webm")
+- `resolution`: The video resolution (e.g., "720p", "1080p", "4k")
 - `quality`: The export quality (e.g., "low", "medium", "high")
 - `fps`: The frames per second for the exported video
 
