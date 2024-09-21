@@ -15,6 +15,11 @@
       "to": "#8477FF"
     }
   },
+  "api": {
+    "auth": {
+      "method": "bearer" 
+    }
+  },
   "topbarLinks": [
     {
       "name": "Support",
@@ -32,6 +37,7 @@
     },
     {
       "name": "API Reference",
+      "openapi": "/api-reference/openapi.json",
       "url": "api-reference"
     }
   ],
@@ -79,17 +85,20 @@
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "Project",
       "pages": [
-        "api-reference/introduction"
+        "api-reference/get-project",
+        "api-reference/get-projects",
+        "api-reference/create-project",
+        "api-reference/update-project",
+        "api-reference/delete-project"
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "Video",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/export-video",
+        "api-reference/export-status"
       ]
     }
   ],

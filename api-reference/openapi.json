@@ -1,58 +1,798 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "title": "BlendDuck REST API",
+    "description": "BlendDuck REST API for dynamic video creation"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://blendduck.com/api/v1"
     }
   ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
-  "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+  "components": {
+    "schemas": {
+      "ProjectMeta": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "version"
+        ]
+      },
+      "PureColor": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "color"
+            ]
+          },
+          "color": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "color"
+        ]
+      },
+      "GradientColor": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "gradient"
+            ]
+          },
+          "gradient": {
+            "type": "object",
+            "properties": {
+              "gradient": {
+                "type": "string"
+              },
+              "angle": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "gradient",
+              "angle"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "gradient"
+        ]
+      },
+      "Background": {
+        "type": "object",
+        "properties": {
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PureColor"
+              },
+              {
+                "$ref": "#/components/schemas/GradientColor"
+              }
+            ]
+          },
+          "media": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "type",
+              "url"
+            ]
+          }
+        },
+        "required": [
+          "color"
+        ]
+      },
+      "ProjectTheme": {
+        "type": "object",
+        "properties": {
+          "background": {
+            "$ref": "#/components/schemas/Background"
+          },
+          "fontFamily": {
+            "type": "string"
+          },
+          "fontColor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PureColor"
+              },
+              {
+                "$ref": "#/components/schemas/GradientColor"
+              }
+            ]
+          }
+        },
+        "required": [
+          "background",
+          "fontFamily",
+          "fontColor"
+        ]
+      },
+      "Animation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "move",
+              "scale",
+              "rotate",
+              "opacity",
+              "color",
+              "appear",
+              "fadeIn",
+              "slideIn",
+              "maskIn",
+              "scaleIn",
+              "disappear",
+              "fadeOut",
+              "slideOut",
+              "maskOut",
+              "scaleOut"
+            ]
+          },
+          "startTime": {
+            "type": "number",
+            "minimum": 0
+          },
+          "endTime": {
+            "type": "number",
+            "minimum": 0
+          },
+          "easing": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "startTime",
+          "endTime",
+          "easing"
+        ]
+      },
+      "BaseElement": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "width": {
+            "type": "number",
+            "minimum": 0
+          },
+          "height": {
+            "type": "number",
+            "minimum": 0
+          },
+          "rotation": {
+            "type": "number"
+          },
+          "scale": {
+            "type": "number",
+            "minimum": 0
+          },
+          "opacity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "animations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Animation"
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+        },
+        "required": [
+          "id",
+          "type",
+          "x",
+          "y",
+          "width",
+          "height",
+          "rotation",
+          "scale",
+          "opacity",
+          "animations"
+        ]
+      },
+      "Text": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseElement"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "text"
+                ]
+              },
+              "text": {
+                "type": "string"
+              },
+              "fontWeight": {
+                "type": "number"
+              },
+              "fontSize": {
+                "type": "number"
+              },
+              "bold": {
+                "type": "boolean"
+              },
+              "italic": {
+                "type": "boolean"
+              },
+              "underline": {
+                "type": "boolean"
+              },
+              "strikethrough": {
+                "type": "boolean"
+              },
+              "textStyle": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "shadow",
+                  "stack",
+                  "stage",
+                  "neon",
+                  "glitch"
+                ]
+              },
+              "textAlign": {
+                "type": "string",
+                "enum": [
+                  "left",
+                  "center",
+                  "right"
+                ]
+              },
+              "autoSize": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "text",
+              "fontWeight",
+              "fontSize",
+              "bold",
+              "italic",
+              "underline",
+              "strikethrough",
+              "textStyle",
+              "textAlign",
+              "autoSize"
+            ]
+          }
+        ]
+      },
+      "Image": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseElement"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "image"
+                ]
+              },
+              "radius": {
+                "type": "number"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "radius",
+              "url"
+            ]
+          }
+        ]
+      },
+      "Video": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseElement"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "video"
+                ]
+              },
+              "radius": {
+                "type": "number"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "volume": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "loop": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "radius",
+              "url",
+              "volume",
+              "loop"
+            ]
+          }
+        ]
+      },
+      "Emoji": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseElement"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "emoji"
+                ]
+              },
+              "radius": {
+                "type": "number"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "required": [
+              "radius",
+              "url"
+            ]
+          }
+        ]
+      },
+      "Shape": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseElement"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "shape"
+                ]
+              },
+              "shapeId": {
+                "type": "number"
+              },
+              "fill": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/PureColor"
+                  },
+                  {
+                    "$ref": "#/components/schemas/GradientColor"
+                  },
+                  {
+                    "nullable": true
                   }
+                ]
+              }
+            },
+            "required": [
+              "shapeId"
+            ]
+          }
+        ]
+      },
+      "Element": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseElement"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "addon"
+                ]
+              },
+              "scope": {
+                "type": "string"
+              },
+              "widgetId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "scope",
+              "widgetId"
+            ]
+          }
+        ]
+      },
+      "Group": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseElement"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "group"
+                ]
+              },
+              "children": {
+                "type": "array",
+                "items": {
+                  "nullable": true
+                }
+              }
+            },
+            "required": [
+              "children"
+            ]
+          }
+        ]
+      },
+      "AudioPlay": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "audioPlay"
+            ]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "name": {
+            "type": "string"
+          },
+          "offset": {
+            "type": "number",
+            "minimum": 0
+          },
+          "startTime": {
+            "type": "number",
+            "minimum": 0
+          },
+          "endTime": {
+            "type": "number",
+            "minimum": 0
+          },
+          "volume": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "fade": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "in": {
+                "type": "number",
+                "default": 0
+              },
+              "out": {
+                "type": "number",
+                "default": 0
+              }
+            }
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "url",
+          "name",
+          "offset",
+          "startTime",
+          "endTime",
+          "volume"
+        ]
+      },
+      "ProjectClip": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "number",
+            "minimum": 0.01
+          },
+          "durationLock": {
+            "type": "boolean"
+          },
+          "transition": {
+            "type": "string",
+            "enum": [
+              "none",
+              "fade",
+              "wipe",
+              "flip",
+              "slide",
+              "clock"
+            ]
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Text"
+                },
+                {
+                  "$ref": "#/components/schemas/Image"
+                },
+                {
+                  "$ref": "#/components/schemas/Video"
+                },
+                {
+                  "$ref": "#/components/schemas/Emoji"
+                },
+                {
+                  "$ref": "#/components/schemas/Shape"
+                },
+                {
+                  "$ref": "#/components/schemas/Element"
+                },
+                {
+                  "$ref": "#/components/schemas/Group"
+                }
+              ],
+              "discriminator": {
+                "propertyName": "type",
+                "mapping": {
+                  "text": "#/components/schemas/Text",
+                  "image": "#/components/schemas/Image",
+                  "video": "#/components/schemas/Video",
+                  "emoji": "#/components/schemas/Emoji",
+                  "shape": "#/components/schemas/Shape",
+                  "addon": "#/components/schemas/Element",
+                  "group": "#/components/schemas/Group"
                 }
               }
             }
           },
-          "400": {
-            "description": "Unexpected error",
+          "audios": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/AudioPlay"
+            }
+          },
+          "background": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Background"
+              },
+              {
+                "nullable": true
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "duration",
+          "durationLock",
+          "transition",
+          "elements"
+        ]
+      },
+      "ProjectResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "ratio": {
+            "type": "string"
+          },
+          "share": {
+            "type": "boolean"
+          },
+          "teamId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ProjectMeta"
+          },
+          "theme": {
+            "$ref": "#/components/schemas/ProjectTheme"
+          },
+          "clips": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectClip"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "ratio",
+          "share",
+          "teamId",
+          "userId",
+          "meta",
+          "theme",
+          "clips",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "Project json": {
+        "type": "string"
+      },
+      "ExportResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ExportOptions": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fps": {
+            "type": "string",
+            "enum": [
+              "30",
+              "60"
+            ],
+            "default": "30",
+            "example": "30"
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "720p",
+              "1080p",
+              "4k"
+            ],
+            "default": "720p",
+            "example": "720p"
+          },
+          "quality": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "example": "medium"
+          },
+          "isPublic": {
+            "type": "boolean",
+            "default": false,
+            "description": "video visibility",
+            "example": false
+          }
+        },
+        "required": [
+          "id",
+          "quality"
+        ]
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/projects/{id}": {
+      "get": {
+        "summary": "Get Project",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Project Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ProjectResponse"
                 }
               }
             }
@@ -60,135 +800,665 @@
         }
       },
       "post": {
-        "description": "Creates a new plant in the store",
+        "summary": "Create Project",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
         "requestBody": {
-          "description": "Plant to add to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/Project json"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
-            "description": "plant response",
+            "description": "Project Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ProjectResponse"
+                    },
+                    {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "ratio": {
+                          "type": "string"
+                        },
+                        "share": {
+                          "type": "boolean"
+                        },
+                        "teamId": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ProjectMeta"
+                        },
+                        "theme": {
+                          "$ref": "#/components/schemas/ProjectTheme"
+                        },
+                        "clips": {
+                          "type": "array",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/ProjectClip"
+                              },
+                              {
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "duration": {
+                                    "type": "number",
+                                    "minimum": 0.01
+                                  },
+                                  "durationLock": {
+                                    "type": "boolean"
+                                  },
+                                  "transition": {
+                                    "type": "string",
+                                    "enum": [
+                                      "none",
+                                      "fade",
+                                      "wipe",
+                                      "flip",
+                                      "slide",
+                                      "clock"
+                                    ]
+                                  },
+                                  "elements": {
+                                    "type": "array",
+                                    "items": {
+                                      "allOf": [
+                                        {
+                                          "$ref": "#/components/schemas/Element"
+                                        },
+                                        {
+                                          "oneOf": [
+                                            {
+                                              "$ref": "#/components/schemas/Text"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Image"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Video"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Emoji"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Shape"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Element"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Group"
+                                            }
+                                          ],
+                                          "discriminator": {
+                                            "propertyName": "type",
+                                            "mapping": {
+                                              "text": "#/components/schemas/Text",
+                                              "image": "#/components/schemas/Image",
+                                              "video": "#/components/schemas/Video",
+                                              "emoji": "#/components/schemas/Emoji",
+                                              "shape": "#/components/schemas/Shape",
+                                              "addon": "#/components/schemas/Element",
+                                              "group": "#/components/schemas/Group"
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "audios": {
+                                    "type": "array",
+                                    "nullable": true,
+                                    "items": {
+                                      "$ref": "#/components/schemas/AudioPlay"
+                                    }
+                                  },
+                                  "background": {
+                                    "allOf": [
+                                      {
+                                        "$ref": "#/components/schemas/Background"
+                                      },
+                                      {
+                                        "nullable": true
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
           }
         }
-      }
-    },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+      },
+      "put": {
+        "summary": "Update Project",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Project json"
+              }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "project response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ProjectResponse"
+                    },
+                    {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "ratio": {
+                          "type": "string"
+                        },
+                        "share": {
+                          "type": "boolean"
+                        },
+                        "teamId": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ProjectMeta"
+                        },
+                        "theme": {
+                          "$ref": "#/components/schemas/ProjectTheme"
+                        },
+                        "clips": {
+                          "type": "array",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/ProjectClip"
+                              },
+                              {
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "duration": {
+                                    "type": "number",
+                                    "minimum": 0.01
+                                  },
+                                  "durationLock": {
+                                    "type": "boolean"
+                                  },
+                                  "transition": {
+                                    "type": "string",
+                                    "enum": [
+                                      "none",
+                                      "fade",
+                                      "wipe",
+                                      "flip",
+                                      "slide",
+                                      "clock"
+                                    ]
+                                  },
+                                  "elements": {
+                                    "type": "array",
+                                    "items": {
+                                      "allOf": [
+                                        {
+                                          "$ref": "#/components/schemas/Element"
+                                        },
+                                        {
+                                          "oneOf": [
+                                            {
+                                              "$ref": "#/components/schemas/Text"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Image"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Video"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Emoji"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Shape"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Element"
+                                            },
+                                            {
+                                              "$ref": "#/components/schemas/Group"
+                                            }
+                                          ],
+                                          "discriminator": {
+                                            "propertyName": "type",
+                                            "mapping": {
+                                              "text": "#/components/schemas/Text",
+                                              "image": "#/components/schemas/Image",
+                                              "video": "#/components/schemas/Video",
+                                              "emoji": "#/components/schemas/Emoji",
+                                              "shape": "#/components/schemas/Shape",
+                                              "addon": "#/components/schemas/Element",
+                                              "group": "#/components/schemas/Group"
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "audios": {
+                                    "type": "array",
+                                    "nullable": true,
+                                    "items": {
+                                      "$ref": "#/components/schemas/AudioPlay"
+                                    }
+                                  },
+                                  "background": {
+                                    "allOf": [
+                                      {
+                                        "$ref": "#/components/schemas/Background"
+                                      },
+                                      {
+                                        "nullable": true
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Project",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Delete Operation Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "string",
+                      "enum": [
+                        "true"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success"
+                  ]
                 }
               }
             }
           }
         }
       }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+    },
+    "/projects": {
+      "get": {
+        "summary": "Get Projects",
+        "parameters": [
+          {
+            "schema": {
+              "type": "number",
+              "example": 0
+            },
+            "required": true,
+            "name": "page",
+            "in": "path"
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          {
+            "schema": {
+              "type": "number",
+              "example": 20
+            },
+            "required": true,
+            "name": "limit",
+            "in": "path"
           }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+        ],
+        "responses": {
+          "200": {
+            "description": "Project List Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "projects": {
+                      "type": "array",
+                      "items": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/ProjectResponse"
+                          },
+                          {
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "ratio": {
+                                "type": "string"
+                              },
+                              "share": {
+                                "type": "boolean"
+                              },
+                              "teamId": {
+                                "type": "string"
+                              },
+                              "userId": {
+                                "type": "string"
+                              },
+                              "meta": {
+                                "$ref": "#/components/schemas/ProjectMeta"
+                              },
+                              "theme": {
+                                "$ref": "#/components/schemas/ProjectTheme"
+                              },
+                              "clips": {
+                                "type": "array",
+                                "items": {
+                                  "allOf": [
+                                    {
+                                      "$ref": "#/components/schemas/ProjectClip"
+                                    },
+                                    {
+                                      "properties": {
+                                        "id": {
+                                          "type": "string"
+                                        },
+                                        "duration": {
+                                          "type": "number",
+                                          "minimum": 0.01
+                                        },
+                                        "durationLock": {
+                                          "type": "boolean"
+                                        },
+                                        "transition": {
+                                          "type": "string",
+                                          "enum": [
+                                            "none",
+                                            "fade",
+                                            "wipe",
+                                            "flip",
+                                            "slide",
+                                            "clock"
+                                          ]
+                                        },
+                                        "elements": {
+                                          "type": "array",
+                                          "items": {
+                                            "allOf": [
+                                              {
+                                                "$ref": "#/components/schemas/Element"
+                                              },
+                                              {
+                                                "oneOf": [
+                                                  {
+                                                    "$ref": "#/components/schemas/Text"
+                                                  },
+                                                  {
+                                                    "$ref": "#/components/schemas/Image"
+                                                  },
+                                                  {
+                                                    "$ref": "#/components/schemas/Video"
+                                                  },
+                                                  {
+                                                    "$ref": "#/components/schemas/Emoji"
+                                                  },
+                                                  {
+                                                    "$ref": "#/components/schemas/Shape"
+                                                  },
+                                                  {
+                                                    "$ref": "#/components/schemas/Element"
+                                                  },
+                                                  {
+                                                    "$ref": "#/components/schemas/Group"
+                                                  }
+                                                ],
+                                                "discriminator": {
+                                                  "propertyName": "type",
+                                                  "mapping": {
+                                                    "text": "#/components/schemas/Text",
+                                                    "image": "#/components/schemas/Image",
+                                                    "video": "#/components/schemas/Video",
+                                                    "emoji": "#/components/schemas/Emoji",
+                                                    "shape": "#/components/schemas/Shape",
+                                                    "addon": "#/components/schemas/Element",
+                                                    "group": "#/components/schemas/Group"
+                                                  }
+                                                }
+                                              }
+                                            ]
+                                          }
+                                        },
+                                        "audios": {
+                                          "type": "array",
+                                          "nullable": true,
+                                          "items": {
+                                            "$ref": "#/components/schemas/AudioPlay"
+                                          }
+                                        },
+                                        "background": {
+                                          "allOf": [
+                                            {
+                                              "$ref": "#/components/schemas/Background"
+                                            },
+                                            {
+                                              "nullable": true
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "updatedAt": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "page": {
+                          "type": "number"
+                        },
+                        "limit": {
+                          "type": "number"
+                        },
+                        "total": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "page",
+                        "limit",
+                        "total"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "projects",
+                    "pagination"
+                  ]
+                }
               }
             }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/videos/export": {
+      "post": {
+        "summary": "Export Video",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExportOptions"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Export Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExportResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/videos/export/{id}": {
+      "get": {
+        "summary": "Export Status",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Export Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ExportResponse"
+                    },
+                    {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "status"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

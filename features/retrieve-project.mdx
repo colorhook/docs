@@ -45,9 +45,9 @@ const client = new BlendDuck({
 });
 
 async function retrieveProjects() {
-  const projects = await client.projects.list();
+  const { projects } = await client.projects.list();
   // equals
-  // const projects = await client.projects.list({ page: 0, limit: 20 });
+  // const { projects } = await client.projects.list({ page: 0, limit: 20 });
 }
 
 // Usage
