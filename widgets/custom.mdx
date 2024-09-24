@@ -4,7 +4,264 @@ icon: 'code'
 description: 'Make a widget customized for your needs.'
 ---
 
+While BlendDuck offers a variety of built-in widgets, you may sometimes need functionality that isn't available out of the box. This guide will walk you through the process of creating custom widgets for the BlendDuck platform.
+
+<Warning>
+Please note that because the front-end code for Widgets needs to run on the BlendDuck platform, we will work closely with clients on user experience, security, and rendering. Therefore, custom Widget development is only available for enterprise-level subscribers.
+</Warning>
+
+## Prerequisites
+
+Before you begin, ensure you have:
+
+- Node.js and npm installed
+- Familiarity with React and TypeScript
+- Basic understanding of the BlendDuck platform
+
+## Setting Up Your Development Environment
+
+1. Create a new project directory for your widget.
+
+2. Add the BlendDuck Widget SDK to your `package.json`:
+
+```base
+npm i @blendduck/widget-sdk
+```
+
+## Creating custom Widgets and Panel
+
+### Step 1: Apply a Custom Widget application
+
+Contact us to apply for a Widget developer repository.
+
+BlendDuck will create a private git repository on Github and grant you collaborative development permissions. You can also choose to have the BlendDuck development team handle the custom development entirely.
+
+This git repository will include template code for Widget development, widget scope, and some build configurations.
+
+### Step 2: Define the Widget Structure
+
+Create a new file (e.g., `WidgetA/index.ts`) and define your widget structure:
+
+```ts WidgetA/index.ts
+import { 
+  ElementSchema, 
+  ElementFieldConfig,
+  AppearSchema,
+  AppearFieldConfig,
+} from "./config";
+
+import Widget from "./Widget";
+
+export default {
+  name: 'your-widget-id',
+  Widget: Widget,
+  parameters: {
+    schema: ElementSchema,
+    fieldConfig: ElementFieldConfig,
+  },
+  appear: {
+    schema: AppearSchema,
+    fieldConfig: AppearFieldConfig,
+  },
+  disappear: undefined,
+  defaults: {
+    width: 400,
+    height: 200,
+  }
+}
+```
+
+In the image below, part A shows a custom Widget Panel, part B shows the Inspector panel, and parts C and D show the Appear animation and its corresponding Inspector panel.
+
+![image](https://s.poutduck.com/tmp/sdk.png)
+
+* In a Widget definition, keep the `name` unique within your Widget scope.
+* `parameters` represents the parameters of this Widget that are open for user modification. When a Widget is selected, the BlendDuck editor will automatically build an Inspector panel for user modifications. A Widget may not provide a definition for this field. Refer to part B in the image above.
+* `appear` and `disappear` represent the extended parameters this Widget provides for `Appear` and `Disappear` animations respectively. Like `parameters`, a Widget may not provide a definition for these fields. Refer to part D in the image above.
+* `defaults` indicates additional default parameters for this Widget when creating a new one on the stage.
+
+### Step 3: Implement the Widget Component
+
+Create a React component for your widget:
+
+```ts WidgetA/Widget.ts
+import React from 'react';
+import { useWidgetParameters, useWidgetStyles, useWidgetAppear } from "@blendduck/widget-sdk";
+
+export default function MyCustomWidgetComponent() {
+  const parameters = useWidgetParameters<typeof ElementSchema>();
+  const { width, height } = useWidgetStyles();
+  const appear = useWidgetAppear<typeof AppearSchema>();
+  const disappear = useWidgetAppear<typeof DisappearSchema>();
+  // Implement your widget logic here
+  
+  return (
+    <div style={{ width, height }}>
+      {/* Render your widget UI */}
+    </div>
+  );
+}
+```
+
+You can then build your Widget according to `React` and `Remotion` best practices. After using `@blendduck/widget-sdk`, you can easily obtain the size of the Widget and the parameters passed by the user in the Inspector panel.
+
+### Step 4: Configure Widget Parameters
+
+Define the schema and field configuration for your widget:
+
+```ts WidgetA/config.ts
+import { z } from "zod";
+
+export const ElementSchema = z.object({
+  // Define your widget parameters
+  title: z.string().default('My Widget'),
+  value: z.number().default(0),
+});
+
+export const ElementFieldConfig = {
+  title: {
+    inputProps: {
+      inline: true,
+    }
+  },
+  value: {
+    fieldType: 'number',
+    inputProps: {
+      inline: true,
+      min: 0,
+      max: 100,
+    },
+  }
+};
+
+export const AppearSchema = z.object({
+  // Define appear animation parameters
+  duration: z.number().default(1),
+});
+
+export const AppearFieldConfig = {
+  duration: {
+    inputProps: {
+      inline: true,
+      min: 0.1,
+      max: 5,
+      step: 0.1,
+    }
+  },
+};
+```
+
+BlendDuck provides over 40 built-in form types, which can help developers quickly build a unified UI Inspector. In addition, developers can use `React` to extend new Form UIs for modifying properties.
+
+### Step 5: Handle Resource Loading
+
+If your widget needs to load external resources, use Remotion's `delayRender` and `continueRender`:
+
+```typescript
+import { continueRender, delayRender } from 'remotion';
+import { loadFont } from "@blendduck/widget-sdk";
+
+// Inside your widget component
+const [fontHandle] = useState(() => delayRender());
+
+useEffect(() => {
+  loadFont('Your Font Family').then(() => {
+    continueRender(fontHandle);
+  });
+}, []);
+```
+
+### Step 6: Create a Custom Panel
+
+Create a panel for your widgets:
+
+```tsx Panel.ts
+import React from "react";
+import { Text } from "@radix-ui/themes";
+import { dispatchEvent } from '@blendduck/widget-sdk';
+
+const SCOPE = process.env.BLENDDUCK_WIDGET_SCOPE;
+const assetDir = process.env.BLENDDUCK_WIDGET_DIR;
+const assetPath = process.env.BLENDDUCK_WIDGET_PATH;
+
+type WidgetKey = string;
+
+const widgets: WidgetKey[] = [
+  'widgetA',
+]
+
+export const Panel: React.FC = () => {
+  const onWidgetClick = (scope: string, key: string) => {
+    dispatchEvent("addWidget", {
+      scope,
+      widgetId: key,
+    })
+  }
+  return (
+    <div>
+      <div className='p-4 border-b'>
+        <Text as="div" size="3" weight="medium">Hot widgets</Text>
+      </div>
+      <div className="grid grid-cols-[repeat(3,minmax(0,1fr))] gap-2 p-4">
+        {
+          widgets.map((item) => {
+            const img = getImageURL(SCOPE, item);
+            return (
+              <div 
+                key={item}
+                onClick={() => { onWidgetClick(scope, item) }}
+                className="flex items-center border aspect-square justify-center w-full h-full rounded-md hover:bg-[var(--gray-3)]">
+                <img className="w-full h-full" src={img} />
+              </div>
+            )
+          })
+        }
+      </div>
+    </div>
+  )
+}
+
+const getImageURL = (scope, img) => {
+  if (scope === SCOPE_CORE) {
+    return `${assetPath}${img}.png`
+  }
+  return `${assetDir}${scope}/${img}.png`
+}
+```
+
+### Step 7: Reigster Widgets and Panel
+
+Finally, create a `WidgetLibrary` in your code and register the `Widget(s)` and `Panel`.
+
+```ts index.ts
+import { WidgetLibrary } from '@blendduck/widget-sdk';
+import "./index.css";
+import WidgetA from './WidgetA';
+// import WidgetB from './WidgetB';
+import Panel from './Panel';
+
+const widgetLibrary = new WidgetLibrary();
+widgetLibrary.register(WidgetA);
+// widgetLibrary.register(WidgetB);
+widgetLibrary.setPanel(Panel);
+export default widgetLibrary;
+```
+
+### Step 8: Preview your custom Widgets
+
+Start the project and open https://blendduck.com/dev in your browser for online debugging.
+
+```bash
+npm start
+```
+
+## Build your Widgets and Panel
+
+Once you've developed and tested your custom widget, submit your code via git. GitHub Action will automatically build and deploy the project. You can then access your extended Panel in BlendDuck to see the list of Widgets you've developed.
+
+By following this guide, you can create powerful, custom widgets that extend the capabilities of the BlendDuck platform. Remember to stay updated with the latest BlendDuck SDK documentation for any new features or changes in the development process.
 
 ## Related Concepts
 
-- [Builtin Widgets](/widgets/list)
+- [About Widget](/widgets/about)
+- [Built-in Widgets](/widgets/list)

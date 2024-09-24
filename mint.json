@@ -80,6 +80,7 @@
     {
       "group": "Widget Reference",
       "pages": [
+        "widgets/about",
         "widgets/list",
         "widgets/custom"
       ]

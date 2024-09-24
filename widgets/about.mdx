@@ -1,0 +1,57 @@
+---
+title: 'About Widget'
+icon: 'puzzle-piece'
+description: 'Use ready-made widgets out of box'
+---
+
+BlendDuck Widgets are powerful, reusable UI components that can be easily integrated into your projects on the BlendDuck platform. These widgets enhance your ability to visualize data, add interactivity, and create compelling visual experiences.
+
+## How to Use Widgets
+
+Using widgets in your BlendDuck projects is straightforward:
+
+1. **Access the Widget Panel**: In your project editor, locate and open the Widget panel.
+
+2. **Browse Available Widgets**: Scroll through the list of available widgets or use the search function if available.
+
+3. **Add a Widget to Your Stage**: 
+   - Click on the desired widget from the list.
+   - The widget will be added to your stage at a default position.
+
+4. **Position and Resize**: 
+   - Drag the widget to position it on your stage.
+   - Use the resize handles to adjust its size as needed.
+
+5. **Customize the Widget**:
+   - Select the widget on your stage to open its properties panel.
+   - Adjust the available settings to customize the widget's appearance and behavior.
+
+## Create Widgets using SDK
+
+A `Widget` is an extension of an `Element`. You can create a project with Widgets:
+
+```ts
+import BlendDuck, { Project, Clip, Widget } from "@blendduck/node-sdk";
+
+const client = new BlendDuck({
+  apiKey: process.env.BLENDDUCK_API_KEY
+});
+
+const project = new Project();
+const clip1 = new Clip(5); // 5-second clip
+project.addClip(clip1);
+
+const widget = new Widget({ 
+  scope: 'core', 
+  widgetId: 'counter' 
+});
+
+clip1.elements.push(widget);
+```
+
+This script creates a Widget with the scope set to core and the widgetId set to counter. Its function is to quickly create number transition animations. You can view all Widgets on the [Built-in Widgets]((/widgets/list)) page.
+
+## Related Concepts
+
+- [Built-in Widgets](/widgets/list)
+- [Build a Widget](/widgets/custom)

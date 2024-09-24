@@ -1,0 +1,10 @@
+export const WidgetCard = ({ scope, name }) => (
+  <div className="flex items-center gap-2 py-2">
+    <Frame>
+      <img src={`https://s.poutduck.com/widgets/${scope}/${name}.png`} noZoom width="80" height="80" alt="counter" />
+    </Frame>
+    <div className="flex flex-col">
+      <div><span>Widget ID:</span><span className="font-bold pl-2">{name}</span></div>
+    </div>
+  </div>
+);
