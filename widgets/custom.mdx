@@ -229,6 +229,87 @@ const getImageURL = (scope, img) => {
 }
 ```
 
+You can add or update a Speech AudioPlay by `dispatchEvent` method:
+
+```tsx
+const TTS_PANEL_KEY = 'your_tts_panel_key';
+
+interface PanelState {
+  taskId?: string;
+  text: string;
+  language_code: string;
+  voiceId: string;
+  loading: boolean;
+}
+
+const Panel: React.FC = () => {
+  const {
+    selectedSpeech,
+    state,
+    setState,
+  } = usePanelState<PanelState>();
+
+  // change the panel state while a Speech AudioPlay focused
+  useEffect(() => {
+    if (selectedSpeech?.userdata?.provider === TTS_PANEL_KEY) {
+      const userdata = selectedSpeech.userdata;
+      setState({
+        text: userdata.text,
+        language_code: userdata.language_code,
+        voiceId: userdata.voiceId,
+        loading: false,
+      })
+    }
+  }, [selectedSpeech])
+
+  const { text, language_code, voiceId, loading } = state;
+
+  // The current id of focused AudioPlay 
+  let selectedAudioPlayId: string | undefined;
+  if (selectedSpeech?.userdata?.provider === TTS_PANEL_KEY) {
+    selectedAudioPlayId = selectedSpeech.id;
+  };
+
+  const handleAddSpeech = ({ name, url }) => {
+    BlendDuckWidgetSDK.dispatchEvent("addAudioPlay", {
+      id: selectedAudioPlayId,
+      name,
+      url,
+      // You must pass the `userdata` parameter for editing later
+      userdata: {
+        text,
+        language_code,
+        voiceId,
+        provider: TTS_PANEL_KEY,
+      }
+    });
+  };
+  
+  return (
+    <div>
+      {/* ... */}
+      <TextArea
+        rows={6}
+        value={text}
+        onChange={(e) => {
+          setState({
+            ...state,
+            text: e.currentTarget.value,
+          });
+        }}
+        placeholder="Type anything in any language and turn text into natural-sounding speech"
+      />
+      <Button 
+        onClick={handleAddOrUpdateSpeech}>
+        {selectedAudioPlayId ? 'Update Speech' : 'Add Speech'}
+      </Button>
+    </div>
+  )
+};
+
+export default Panel;
+```
+
 ### Step 7: Reigster Widgets and Panel
 
 Finally, create a `WidgetLibrary` in your code and register the `Widget(s)` and `Panel`.

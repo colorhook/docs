@@ -213,11 +213,44 @@ The `Widget` element allows for embedding custom-built components. This flexible
 |------|------|-------------|------|
 | scope | string | - |  The widget package scope identifier. |
 | widgetId | string | - |  The widget ID in the scope. |
+| play     | object | - | The widget AudioPlay |
 
 ```ts
 import { Widget } from "@blendduck/node-sdk";
 
 const widget = new Widget({ scope: 'core', widgetId: 'counter' });
+```
+
+Create a widget with a AudioPlay controller
+
+```ts
+import { Widget } from "@blendduck/node-sdk";
+
+const widget = new Widget({ 
+  scope: 'core', 
+  widgetId: 'avatar',
+  // avatar preview image
+  avatar: {
+    url: 'https://s.blendduck.com/images/avatar-000.png'
+  },
+  // avatar audio
+  audio: {
+    url: 'https://s.blendduck.com/audios/motivation.mp3'
+  },
+  // generated avatar video
+  video: null,
+  // timeline AudioPlay control bar
+  play: {
+    id: 'test',
+    type: 'audioPlay',
+    name: 'Avatar',
+    offset: 0,
+    startTime: 0,
+    endTime: 5,
+    volume: 1,
+    url: 'https://s.blendduck.com/audios/motivation.mp3'
+  }
+});
 ```
 
 A `Widget` is an extension of an `Element`. You can use the built-in ready-made widgets or develop your own widgets.
